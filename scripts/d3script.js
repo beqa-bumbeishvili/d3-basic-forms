@@ -19,6 +19,7 @@ function renderChart(params) {
     marginRight: 5,
     marginLeft: 5,
     container: 'body',
+    labelsSpacing: 40,
     data: null
   };
 
@@ -37,6 +38,24 @@ function renderChart(params) {
       calc.chartTopMargin = attrs.marginTop;
       calc.chartWidth = attrs.svgWidth - attrs.marginRight - calc.chartLeftMargin;
       calc.chartHeight = attrs.svgHeight - attrs.marginBottom - calc.chartTopMargin;
+      calc.chartRadius = Math.min(width, height) / 2;
+
+      //Scales
+      var scales = {}
+      scales.colorRange = d3.scaleOrdinal().range(["#2C93E8", "#838690", "#F56C4E"]);
+
+      //Arcs
+      var arcs = {}
+
+      //chart arc
+      arcs.mainArc = d3.arc()
+        .outerRadius(attrs.chartRadius)
+        .innerRadius(0);
+
+      //arc for labels  
+      arcs.labelArc = d3.arc()
+        .outerRadius(attrs.chartRadius - labelsSpacing)
+        .innerRadius(attrs.chartRadius - labelsSpacing)
 
       //Drawing containers
       var container = d3.select(this);
@@ -49,6 +68,8 @@ function renderChart(params) {
       //Add container g element
       var chart = svg.patternify({ tag: 'g', selector: 'chart' })
         .attr('transform', 'translate(' + (calc.chartLeftMargin) + ',' + calc.chartTopMargin + ')');
+
+      var pie = d3.pie().value(function (d) { return d.presses; })(attrs.data);
 
       // Smoothly handle data updating
       updateData = function () {
