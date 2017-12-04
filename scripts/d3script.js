@@ -38,7 +38,7 @@ function renderChart(params) {
       calc.chartTopMargin = attrs.marginTop;
       calc.chartWidth = attrs.svgWidth - attrs.marginRight - calc.chartLeftMargin;
       calc.chartHeight = attrs.svgHeight - attrs.marginBottom - calc.chartTopMargin;
-      calc.chartRadius = Math.min(width, height) / 2;
+      calc.chartRadius = Math.min(calc.chartWidth, calc.chartHeight) / 2;
 
       //Scales
       var scales = {}
@@ -49,13 +49,13 @@ function renderChart(params) {
 
       //chart arc
       arcs.mainArc = d3.arc()
-        .outerRadius(attrs.chartRadius)
+        .outerRadius(calc.chartRadius - 10)
         .innerRadius(0);
 
       //arc for labels  
       arcs.labelArc = d3.arc()
-        .outerRadius(attrs.chartRadius - labelsSpacing)
-        .innerRadius(attrs.chartRadius - labelsSpacing)
+        .outerRadius(calc.chartRadius - attrs.labelsSpacing)
+        .innerRadius(calc.chartRadius - attrs.labelsSpacing)
 
       //Drawing containers
       var container = d3.select(this);
@@ -63,13 +63,32 @@ function renderChart(params) {
       //Add svg
       var svg = container.patternify({ tag: 'svg', selector: 'svg-chart-container' })
         .attr('width', attrs.svgWidth)
-        .attr('height', attrs.svgHeight)
+        .attr('height', attrs.svgHeight);
 
       //Add container g element
       var chart = svg.patternify({ tag: 'g', selector: 'chart' })
-        .attr('transform', 'translate(' + (calc.chartLeftMargin) + ',' + calc.chartTopMargin + ')');
+        .attr("transform", "translate(" + calc.chartWidth / 2 + "," + calc.chartHeight / 2 + ")");
 
+      //create pie layout
       var pie = d3.pie().value(function (d) { return d.presses; })(attrs.data);
+
+      //pie group
+      var pieGroup = chart.selectAll("arc")
+        .data(pie)
+        .enter().append("g")
+        .attr("class", "arc");
+
+      //display chart
+      pieGroup.append("path")
+        .attr("d", arcs.mainArc)
+        .style("fill", function (d) { return scales.colorRange(d.data.letter); });
+
+      //display labels
+      pieGroup.append("text")
+        .attr("transform", function (d) {
+          return "translate(" + arcs.labelArc.centroid(d) + ")"; })
+        .text(function (d) { return d.data.letter; })
+        .style("fill", "#fff");
 
       // Smoothly handle data updating
       updateData = function () {
