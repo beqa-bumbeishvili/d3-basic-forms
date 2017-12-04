@@ -4,11 +4,9 @@
 
 <head>
     <meta charset="UTF-8">
-    <title>Chart</title>
+    <title>Pie Chart</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-
-
+    <link rel="icon" href="https://www.meta-chart.com/assets/images/pie/pie_chart_normal.png" type="image/x-icon" />
 
 </head>
 
@@ -21,15 +19,15 @@
     <script src="scripts/d3script.js"></script>
 
     <script>
+        var data = [{ "letter": "q", "presses": 1 }, { "letter": "w", "presses": 5 }, { "letter": "e", "presses": 2 }];
 
-
-          var chart = renderChart()
-                .svgHeight(window.innerHeight-30)
-                .svgWidth(window.innerWidth-30)
-                .container('#myGraph')
-                .data('Pass Something Here and use it as attrs.data')
-                .debug(true)
-                .run()
+        var chart = renderChart()
+            .svgHeight(window.innerHeight - 30)
+            .svgWidth(window.innerWidth - 30)
+            .container('#myGraph')
+            .data(data)
+            .debug(true)
+            .run()
 
 
     </script>
