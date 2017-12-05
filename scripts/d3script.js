@@ -12,8 +12,10 @@ function renderChart(params) {
   // Exposed variables
   var attrs = {
     id: "ID" + Math.floor(Math.random() * 1000000),  // Id for event handlings
-    svgWidth: 400,
-    svgHeight: 400,
+    svgWidth: 1000,
+    svgHeight: 1000,
+    chartWidth: 300,
+    chartHeight: 300,
     marginTop: 5,
     marginBottom: 5,
     marginRight: 5,
@@ -38,7 +40,7 @@ function renderChart(params) {
       calc.chartTopMargin = attrs.marginTop;
       calc.chartWidth = attrs.svgWidth - attrs.marginRight - calc.chartLeftMargin;
       calc.chartHeight = attrs.svgHeight - attrs.marginBottom - calc.chartTopMargin;
-      calc.chartRadius = Math.min(calc.chartWidth, calc.chartHeight) / 2;
+      calc.chartRadius = Math.min(attrs.chartWidth, attrs.chartHeight) / 2;
 
       //Scales
       var scales = {}
@@ -67,7 +69,7 @@ function renderChart(params) {
 
       //Add container g element
       var chart = svg.patternify({ tag: 'g', selector: 'chart' })
-        .attr("transform", "translate(" + calc.chartWidth / 2 + "," + calc.chartHeight / 2 + ")");
+        .attr("transform", "translate(" + calc.chartWidth / 4 + "," + calc.chartHeight / 5 + ")");
 
       //create pie layout
       var pie = d3.pie().value(function (d) { return d.presses; })(attrs.data);
@@ -86,9 +88,19 @@ function renderChart(params) {
       //display labels
       pieGroup.append("text")
         .attr("transform", function (d) {
-          return "translate(" + arcs.labelArc.centroid(d) + ")"; })
+          return "translate(" + arcs.labelArc.centroid(d) + ")";
+        })
         .text(function (d) { return d.data.letter; })
         .style("fill", "#fff");
+
+        //pie chart heading
+      var pieHeading = svg.patternify({ tag: 'text', selector: 'pie-chart-heading' })
+        .attr("transform", function (d) {
+          return "translate(" + 210 + "," + 30 + ")";
+        })
+        .text("Pie Chart")
+        .attr('font-size',19)
+        .style("fill", "#000000");
 
       // Smoothly handle data updating
       updateData = function () {
